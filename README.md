@@ -7,6 +7,4 @@ Allows for encryption/decryption with portions from Frankenstein, 1984, and Crim
 
 Explanations on Book Ciphers and the basic operations of this implementation are included within. 
 
-WIP:
-1. Expanding on the option to decrypt the encrypted messages, making it possible to tease the plaintext out.
-2. Adding hints to cracking a book cipher.
+Some premade ciphertexts are available if one wants to try and brute force them, just as an illustration on the effectiveness of the cipher. 
