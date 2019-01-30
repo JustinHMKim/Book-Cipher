@@ -12,10 +12,11 @@
 using std::cout; using std::endl; using std::string; using std::vector;
 using std::cin; using std::getline; using std::ifstream; using std::map; using std::pair;
 
-void inputMessage(string user_input, vector<char> book_input, vector<char> &book_output);//performs the XOR and wrap-around operations
+void inputMessage(string user_input, vector<char> book_input, vector<char> &book_output, int position);//performs the XOR and wrap-around operations
 void bruteForce(string attempt, vector<char> ciphertext);//feeds brute force attempts into inputMessages
 void chooseBook(int book_choice, vector<char> &loaded_book);//allows for user to select one of three texts to use as their cipher
 void toCrack(vector<char> &prepared_message);//selects which premade ciphertext the user should attempt to crack
+int invalidin();
 
 map<int, vector<char>> bru_for_attm;//stores each brute forcing attempts per try
 
@@ -26,6 +27,7 @@ int main()
     do{
         int choice;
         int book_choice;
+        int book_position;
 
         string user_in;
         vector<char> user_book;
@@ -35,25 +37,26 @@ int main()
            <<endl<<"3. Try to decrypt one of the provided sample messages on your own."<<endl;
         cin>>choice;
         cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
         while(choice !=1 && choice != 2 && choice != 3){
-            cout<<"Please enter a valid input: ";
-            cin>>choice;
-            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            choice = invalidin();
         }
-
         if (choice == 1){
 
             cout<<"What book would you like to select?"<< endl<<"1. Frankenstein"<<endl<<"2. 1984"<<endl<<"3. Crime and Punishment"<<endl
                <<"4. Randomly choose among the 3"<<endl;
             cin>>book_choice;
+            if (book_choice !=1 && book_choice != 2 && book_choice != 3 && book_choice !=4){
+                book_choice = invalidin();
+            }
             chooseBook(book_choice,user_book);
             cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
+            cout<<"How many characters in would you like to start from?"<<endl<<"Frankenstein Ch.1 has 6727 characters, 1984 Ch.1 has 22527, and Crime and Punishment Ch.1 has 18174."<<endl<<"(To start from the beginning, enter 0): ";
+            cin>>book_position;
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             cout<<"Enter the message you'd like to encrypt (alphabetical, spaces, ',', '.', '-' only): ";
             getline(cin,user_in);
             std::transform(user_in.begin(),user_in.end(),user_in.begin(), :: tolower);//sets input to lower case for simplicity
-            inputMessage(user_in,user_book, message);
+            inputMessage(user_in,user_book, message, book_position);
 
             for (vector<char>::const_iterator i = message.begin(); i != message.end(); ++i){
                 cout << *i;
@@ -113,26 +116,28 @@ int main()
 
             }while (try_decrypt == 'y' || try_decrypt == 'Y');
         }
+
         cout<<"Would you like to continue? (Y/N): ";
         cin>>cont;
         cout<<endl;
     }while (cont == 'Y' || cont =='y');
 
-    cout<<"Hope you enjoyed your time!"<<endl<<" Have a nice day!";
+    cout<<"Hope you enjoyed your time!"<<endl<<"Have a nice day!"<<endl;
     return 0;
 }
 
-void inputMessage(string user_input, vector<char> book_input, vector<char> &book_output)
+void inputMessage(string user_input, vector<char> book_input, vector<char> &book_output, int position)
 {
     vector<int> message_int;
     vector<char> input(user_input.begin(), user_input.end());
+    int txtwrproun = book_input.size(); //prevents errors if the selected position is out of bounds, allows for wrapping around the text
 
     for (unsigned i = 0; i < input.size(); ++i){
 
         //commented parts can be uncommented to show a bit more the process at work
 
         //cout<<book_input[i]<<" "<<input[i]<<endl;
-        message_int.push_back((chartoint(book_input[i])^chartoint(input[i]))%32); //wrap around at 32 due to accounting for 32 characters
+        message_int.push_back((chartoint(book_input[(i+position)%txtwrproun])^chartoint(input[i]))%32); //wrap around at 32 due to accounting for 32 characters
 
         //cout<<chartoint(book_input[i])<<" "<<" "<<chartoint(input[i])<<" "<<(chartoint(book_input[i])^chartoint(input[i]))%32<<" = "<<inttochar(message_int[i])<<endl;
         book_output.push_back(inttochar(message_int[i]));
@@ -148,7 +153,7 @@ void bruteForce(string attempt, vector<char> ciphertext){
             portion.push_back(ciphertext[cipher_length+attm_lenth]);
         }
 
-        inputMessage(attempt, portion, cipher_out);
+        inputMessage(attempt, portion, cipher_out,0);
         bru_for_attm.insert(pair<int, vector<char>>(cipher_length, cipher_out));
         portion.clear();
         cipher_out.clear();
@@ -216,4 +221,13 @@ void toCrack(vector<char> &prepared_message){
     }
 
     cout<<endl;
+}
+
+int invalidin(){
+    cin.clear();
+    int newinput;
+    cout<<"Please enter a valid input: ";
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    cin>>newinput;
+    return newinput;
 }
