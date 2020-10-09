@@ -174,15 +174,15 @@ void chooseBook(int book_choice, vector<char> &loaded_book){
     }
     if (book_choice == 1){
         cout<<"You've selected Frankenstein"<<endl;
-        my_file.open("C:/Users/Kim/Desktop/Comsci/Book_Cipher/Frankenstein_1.txt");
+        my_file.open("./Frankenstein_1.txt");
     }
     if (book_choice == 2){
         cout<<"You've selected 1984"<<endl;
-        my_file.open("C:/Users/Kim/Desktop/Comsci/Book_Cipher/1984_1.txt");
+        my_file.open("./1984_1.txt");
     }
     if (book_choice == 3){
         cout<<"You've selected Crime and Punishment"<<endl;
-        my_file.open("C:/Users/Kim/Desktop/Comsci/Book_Cipher/Crime_and_Punishment_1.txt");
+        my_file.open("./Crime_and_Punishment_1.txt");
     }
     if (my_file.is_open()){
         string temp;
